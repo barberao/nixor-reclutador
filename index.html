@@ -39,6 +39,7 @@
 
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('sessionId') || 'no-session-id';
+    const name = params.get('name') || 'no-name';
 
    // 1. DETECTAR IDIOMA DEL NAVEGADOR
   /* const userLang = navigator.language || navigator.userLanguage; */
@@ -92,6 +93,7 @@
       mode: 'fullscreen',
       metadata: {
         sessionIdFromUrl: sessionId,
+        nameFromURL: name,
       },
       showWelcomeScreen: true,
       loadPreviousSession: false,

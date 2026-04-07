@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrevista - Burando Kizuna</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="chat.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      background: #f5f7fb;
+    }
+    #n8n-chat {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <div id="n8n-chat"></div>
+
+  <script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+    // ESTO DEBE APARECER NADA MÁS CARGAR LA PÁGINA
+    console.log("Script de Burando Kizuna cargado correctamente");
+
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('sessionId') || 'no-session-id';
+
+   // 1. DETECTAR IDIOMA DEL NAVEGADOR
+  /* const userLang = navigator.language || navigator.userLanguage; */
+  
+  // 2. DEFINIR EL MENSAJE INICIAL SEGÚN EL IDIOMA
+  /* const welcomeMessage = userLang.startsWith('es') 
+    ? '¡Hola! Estoy listo para empezar la entrevista. ¿Comenzamos?' 
+    : 'Hello! I am ready to start the interview. Shall we begin?'; */
+
+    function actualizarBarra(texto) {
+    // Buscamos el patrón "Pregunta X de Y"
+    const match = texto.match(/Pregunta\s*\*?(\d+)\*?\s*de\s*\*?(\d+)\*?/i);
+    
+      if (match) {
+        const current = parseInt(match[1]);
+        const total = parseInt(match[2]);
+        const percentage = (current / total) * 100;
+        
+        console.log(`Moviendo barra al ${percentage}%`);
+        const bar = document.getElementById('progress-bar');
+        if (bar) bar.style.width = `${percentage}%`;
+      }
+
+       if (texto.toUpperCase().includes("FIN DE LA ENTREVISTA")) {
+        document.getElementById('progress-bar').style.width = '100%';
+      } 
+    }
+
+    // EL VIGILANTE (MutationObserver)
+    // Detecta cuando aparecen mensajes nuevos en el HTML del chat
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) { // Si es un elemento HTML
+            const text = node.innerText || "";
+            if (text.includes("Pregunta")) {
+              actualizarBarra(text);
+            }
+          }
+        });
+      });
+    });
+
+    // Empezamos a vigilar el contenedor del chat
+    const targetNode = document.getElementById('n8n-chat');
+    observer.observe(targetNode, { childList: true, subtree: true });
+
+    createChat({
+      webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/3b357d9f-7dab-467b-a834-baede8033466/chat?sessionId=${sessionId}`,
+      target: '#n8n-chat',
+      mode: 'fullscreen',
+      metadata: {
+        sessionIdFromUrl: sessionId,
+      },
+      showWelcomeScreen: true,
+      loadPreviousSession: false,
+      initialMessages: [
+        '¡Hola! Estoy listo para empezar la entrevista. ¿Comenzamos?'
+      ], 
+      // 3. USAR LA VARIABLE DINÁMICA
+      /* initialMessages: [welcomeMessage], */
+      allowFileUploads: false,
+      allowedFilesMimeTypes: 'image/*,application/pdf',
+      enableStreaming: true,
+
+      // Sustituye tu bloque onMessage por este "caza-todo":
+      onMessage: (message) => {
+          console.log("✅ Mensaje recibido (onMessage):", message);
+      },
+      onListen: (message) => {
+          console.log("✅ Mensaje recibido (onListen):", message);
+      },
+      onError: (error) => {
+          console.error("❌ Error detectado:", error);
+      },
+
+      i18n: {
+        en: {
+          title: 'Burando Kizuna',
+          subtitle: 'Responde a las preguntas que el chat te irá haciendo.',
+          footer: '© 2026 Burando Kizuna - Todos los derechos reservados',
+          getStarted: 'Empezar entrevista', // Este es el texto del botón
+          inputPlaceholder: '⌨️ Escribe aquí tu respuesta...'
+        }
+        /* ,en: { // CAMBIADO de 'en' a 'es' para que coincida con tu HTML
+          title: 'Burando Kizuna',
+          subtitle: 'Reply to the questions of the chat.',
+          footer: '',
+          getStarted: 'Start',
+          inputPlaceholder: 'Reply here...'
+        } */
+      }
+    });
+  </script>
+</body>
+</html>

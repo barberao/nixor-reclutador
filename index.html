@@ -88,7 +88,7 @@
     observer.observe(targetNode, { childList: true, subtree: true });
 
     createChat({
-      webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/c4b59e0e-7055-4269-9256-23be016cdf66/chat?sessionId=${sessionId}`,
+      webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/c4b59e0e-7055-4269-9256-23be016cdf66/chat?sessionId=${sessionId}&name=${encodeURIComponent(name)}`,
       target: '#n8n-chat',
       mode: 'fullscreen',
       metadata: {

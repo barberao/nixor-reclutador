@@ -144,7 +144,7 @@
   content: "";
   display: block;
   /* CAMBIO CLAVE: Usamos un ancho porcentual y un máximo */
-  width: 90% !important;      /* Se adapta al ancho de la pantalla */
+  width: 15% !important;      /* Se adapta al ancho de la pantalla */
   max-width: 450px !important; /* No se verá gigante en ordenadores */
   height: 80px !important;     /* Altura un poco más ajustada */
   background-image: url('https://nixor.es/wp-content/uploads/2025/09/logo-nixor-1_1.png'); 

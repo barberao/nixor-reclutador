@@ -123,7 +123,7 @@
           bloquearEntrevista();
           mostrarOverlayFinEntrevista();
           console.log("⛔ Input desactivado - entrevista finalizada");
-        }, 1200);
+        }, 3000);
       } 
     }
 
@@ -154,7 +154,7 @@
     observer.observe(targetNode, { childList: true, subtree: true, characterData: true });
 
     createChat({
-      webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/c4b59e0e-7055-4269-9256-23be016cdf66/chat?sessionId=${sessionId}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(params.get('email') || 'no-email')}`,
+      webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/c4b59e0e-7055-4269-9256-23be016cdf66/chat?sessionId=${sessionId}&name=${encodeURIComponent(params.get('name') || 'no-name')}&email=${encodeURIComponent(params.get('email') || 'no-email')}`,
       target: '#n8n-chat',
       mode: 'fullscreen',
       metadata: {

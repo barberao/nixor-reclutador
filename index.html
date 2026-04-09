@@ -57,7 +57,9 @@
     ? '¡Hola! Estoy listo para empezar la entrevista. ¿Comenzamos?' 
     : 'Hello! I am ready to start the interview. Shall we begin?'; */
 
+    const OVERLAY_DELAY_MS = 6000;
     let entrevistaBloqueada = false;
+    let overlayProgramado = false;
 
     function obtenerControlesChat() {
       const chatRoot = document.getElementById('n8n-chat');
@@ -94,12 +96,20 @@
         button.disabled = true;
       }
 
-      const overlay = document.getElementById('interview-overlay');
-      if (overlay) {
-        overlay.classList.remove('hidden');
+      console.log("⛔ Input desactivado");
+    }
+
+    function programarOverlayFinEntrevista() {
+      if (overlayProgramado) {
+        return;
       }
 
-      console.log("⛔ Input desactivado y overlay mostrado");
+      overlayProgramado = true;
+
+      setTimeout(() => {
+        mostrarOverlayFinEntrevista();
+        console.log("✅ Overlay mostrado al finalizar la entrevista");
+      }, OVERLAY_DELAY_MS);
     }
     
     function actualizarBarra(texto) {
@@ -118,12 +128,7 @@
 
        if (texto.toUpperCase().includes("FIN DE LA ENTREVISTA")) {
         bloquearEntrevista();
-
-        setTimeout(() => {
-          bloquearEntrevista();
-          mostrarOverlayFinEntrevista();
-          console.log("⛔ Input desactivado - entrevista finalizada");
-        }, 3000);
+        programarOverlayFinEntrevista();
       } 
     }
 

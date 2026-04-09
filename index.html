@@ -47,6 +47,7 @@
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('sessionId') || 'no-session-id';
     const name = params.get('name') || 'no-name';
+    const email = params.get('email') || 'no-email';
 
    // 1. DETECTAR IDIOMA DEL NAVEGADOR
   /* const userLang = navigator.language || navigator.userLanguage; */
@@ -153,12 +154,13 @@
     observer.observe(targetNode, { childList: true, subtree: true, characterData: true });
 
     createChat({
-      webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/c4b59e0e-7055-4269-9256-23be016cdf66/chat?sessionId=${sessionId}&name=${encodeURIComponent(name)}`,
+      webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/c4b59e0e-7055-4269-9256-23be016cdf66/chat?sessionId=${sessionId}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(params.get('email') || 'no-email')}`,
       target: '#n8n-chat',
       mode: 'fullscreen',
       metadata: {
         sessionIdFromUrl: sessionId,
         nameFromUrl: name,
+        emailFromUrl: email,
       },
       showWelcomeScreen: true,
       loadPreviousSession: false,

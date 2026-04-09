@@ -30,6 +30,13 @@
   </div>
 
   <div id="n8n-chat"></div>
+  
+  <div id="interview-overlay" class="hidden">
+    <div class="overlay-card">
+      <h2>Entrevista finalizada</h2>
+      <p>Gracias por completar la entrevista.</p>
+    </div>
+  </div>
 
   <script type="module">
     import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
@@ -49,6 +56,51 @@
     ? '¡Hola! Estoy listo para empezar la entrevista. ¿Comenzamos?' 
     : 'Hello! I am ready to start the interview. Shall we begin?'; */
 
+    let entrevistaBloqueada = false;
+
+    function obtenerControlesChat() {
+      const chatRoot = document.getElementById('n8n-chat');
+      if (!chatRoot) {
+        return { input: null, button: null };
+      }
+
+      return {
+        input: chatRoot.querySelector('textarea, input[type="text"]'),
+        button: chatRoot.querySelector('button[type="submit"], .chat-input-send-button, button'),
+      };
+    }
+
+    function bloquearEntrevista() {
+      if (entrevistaBloqueada) {
+        return;
+      }
+
+      entrevistaBloqueada = true;
+
+      const progressBar = document.getElementById('progress-bar');
+      if (progressBar) {
+        progressBar.style.width = '100%';
+      }
+
+      const { input, button } = obtenerControlesChat();
+
+      if (input) {
+        input.disabled = true;
+        input.placeholder = "Entrevista finalizada";
+      }
+
+      if (button) {
+        button.disabled = true;
+      }
+
+      const overlay = document.getElementById('interview-overlay');
+      if (overlay) {
+        overlay.classList.remove('hidden');
+      }
+
+      console.log("⛔ Input desactivado y overlay mostrado");
+    }
+    
     function actualizarBarra(texto) {
     // Buscamos el patrón "Pregunta X de Y"
     const match = texto.match(/Pregunta\s*\*?(\d+)\*?\s*de\s*\*?(\d+)\*?/i);
@@ -64,9 +116,22 @@
       }
 
        if (texto.toUpperCase().includes("FIN DE LA ENTREVISTA")) {
-        document.getElementById('progress-bar').style.width = '100%';
+        bloquearEntrevista();
+
+        setTimeout(() => {
+          bloquearEntrevista();
+          mostrarOverlayFinEntrevista();
+          console.log("⛔ Input desactivado - entrevista finalizada");
+        }, 300);
       } 
     }
+
+    function mostrarOverlayFinEntrevista() {
+      const overlay = document.getElementById('interview-overlay');
+      if (overlay) {
+        overlay.classList.remove('hidden');
+      }
+  }
 
     // EL VIGILANTE (MutationObserver)
     // Detecta cuando aparecen mensajes nuevos en el HTML del chat
@@ -75,7 +140,7 @@
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === 1) { // Si es un elemento HTML
             const text = node.innerText || "";
-            if (text.includes("Pregunta")) {
+            if (text.includes("Pregunta") || text.toUpperCase().includes("FIN DE LA ENTREVISTA")) {
               actualizarBarra(text);
             }
           }
@@ -85,7 +150,7 @@
 
     // Empezamos a vigilar el contenedor del chat
     const targetNode = document.getElementById('n8n-chat');
-    observer.observe(targetNode, { childList: true, subtree: true });
+    observer.observe(targetNode, { childList: true, subtree: true, characterData: true });
 
     createChat({
       webhookUrl: `https://n8n.srv1014576.hstgr.cloud/webhook/c4b59e0e-7055-4269-9256-23be016cdf66/chat?sessionId=${sessionId}&name=${encodeURIComponent(name)}`,

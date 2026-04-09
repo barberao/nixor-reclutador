@@ -250,3 +250,44 @@
   font-family: 'Poppins', sans-serif !important;
 }
 /* Fin del archivo. No añadas ninguna } más aquí */
+
+#interview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+  pointer-events: all;
+}
+
+#interview-overlay.hidden {
+  display: none;
+}
+
+.overlay-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px 28px;
+  max-width: 420px;
+  width: calc(100% - 32px);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  font-family: Poppins, Arial, sans-serif;
+}
+
+.overlay-card h2 {
+  margin: 0 0 10px 0;
+  font-size: 28px;
+  color: #1e293b;
+}
+
+.overlay-card p {
+  margin: 0;
+  font-size: 16px;
+  color: #475569;
+}
